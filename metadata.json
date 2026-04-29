@@ -1,0 +1,8 @@
+{
+  "name": "Muslim Daily Quran",
+  "description": "Comprehensive Islamic app featuring accurate prayer times, full Quran with translations, audio playback, and Qibla compass.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}

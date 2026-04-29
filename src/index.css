@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: "Amiri", serif;
+  
+  --color-bg-base: var(--bg-base);
+  --color-bg-panel: var(--bg-panel);
+  --color-bg-panel-hover: var(--bg-panel-hover);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-border-main: var(--border-main);
+  --color-accent: var(--accent-main);
+  --color-header-bg: var(--header-bg);
+  --color-progress-bg: var(--progress-bg);
+  --color-accent-fg: var(--accent-fg);
+}
+
+@layer base {
+  :root {
+    --bg-base: #F8FAFC;
+    --bg-panel: #FFFFFF;
+    --bg-panel-hover: #F1F5F9;
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --border-main: #E2E8F0;
+    --accent-main: #0D9488;
+    --accent-fg: #FFFFFF;
+    --header-bg: #0F766E;
+    --progress-bg: #064E3B;
+  }
+
+  .dark {
+    --bg-base: #0A0C0B;
+    --bg-panel: #161B18;
+    --bg-panel-hover: #1b211d;
+    --text-main: #FFFFFF;
+    --text-muted: #9CA3AF;
+    --border-main: #1F2937;
+    --accent-main: #D4AF37;
+    --accent-fg: #000000;
+    --header-bg: #161B18;
+    --progress-bg: #0D110F;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

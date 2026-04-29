@@ -1,0 +1,43 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- App Icon Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg_gradient)"/>
+  
+  <!-- Outer Glow -->
+  <rect x="16" y="16" width="480" height="480" rx="96" stroke="url(#border_outline)" stroke-width="8" opacity="0.5"/>
+  
+  <!-- Crescent -->
+  <path d="M328 160C338.411 176.602 344 196.657 344 218C344 275.438 297.438 322 240 322C216.711 322 195.201 314.341 178 301.696C197.801 329.805 231.111 348 268 348C332.065 348 384 296.065 384 232C384 197.808 369.213 167.065 345.244 147.264C340.231 150.81 334.502 155.074 328 160Z" fill="url(#gold_gradient)"/>
+  <path d="M268 348C231.111 348 197.801 329.805 178 301.696C185.08 306.772 193.308 310.966 202.261 314.077C214.28 318.256 226.96 320.485 240 320.485C296.815 320.485 342.923 274.655 343.985 218.005C343.995 217.498 344 216.99 344 216.48C344 195.137 338.411 175.082 328 158.48C339.734 163.766 350.133 171.189 358.557 180.323C375.056 198.223 384 219.866 384 242.428C384 300.999 336.572 348 268 348Z" fill="url(#gold_gradient)" opacity="0.5"/>
+
+  <!-- Quran -->
+  <g transform="translate(0, 30)">
+    <!-- Pages -->
+    <path d="M256 344L144 304V192C144 192 208 176 256 224C304 176 368 192 368 192V304L256 344Z" fill="white"/>
+    <path d="M256 344V224C208 176 144 192 144 192" stroke="#E5E7EB" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M256 344V224C304 176 368 192 368 192" stroke="#E5E7EB" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Lines -->
+    <path d="M184 240L232 256" stroke="#D1D5DB" stroke-width="12" stroke-linecap="round"/>
+    <path d="M184 272L232 288" stroke="#D1D5DB" stroke-width="12" stroke-linecap="round"/>
+    <path d="M328 240L280 256" stroke="#D1D5DB" stroke-width="12" stroke-linecap="round"/>
+    <path d="M328 272L280 288" stroke="#D1D5DB" stroke-width="12" stroke-linecap="round"/>
+  </g>
+
+  <!-- Glowing Star -->
+  <path d="M256 80L266.301 110.158L298.053 115.111L272.768 135.321L281.82 165.733L256 148.643L230.18 165.733L239.232 135.321L213.947 115.111L245.699 110.158L256 80Z" fill="url(#gold_gradient)"/>
+  
+  <defs>
+    <linearGradient id="bg_gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3B7D60"/>
+      <stop offset="1" stop-color="#234D3A"/>
+    </linearGradient>
+    <linearGradient id="border_outline" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#86EFAC"/>
+      <stop offset="1" stop-color="#4ADE80" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gold_gradient" x1="100" y1="100" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDE047"/>
+      <stop offset="1" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+</svg>

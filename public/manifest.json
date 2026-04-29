@@ -1,0 +1,17 @@
+{
+  "name": "Muslim Daily Quran",
+  "short_name": "Daily Quran",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#4D8F76",
+  "theme_color": "#4D8F76",
+  "description": "A daily companion app for Muslims featuring Quran, Hadith, Qibla, and more.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

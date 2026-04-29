@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile data",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "createdAt": { "type": "timestamp" }
+      },
+      "required": ["email", "createdAt"]
+    },
+    "DailyProgress": {
+      "title": "Daily Progress",
+      "description": "User's daily checklist progress",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "salatCompletion": { "type": "number" },
+        "quranCompletion": { "type": "number" },
+        "tasbihCompletion": { "type": "number" },
+        "totalCompletion": { "type": "number" },
+        "updatedAt": { "type": "timestamp" }
+      },
+      "required": ["date", "updatedAt"]
+    },
+    "History": {
+      "title": "User History",
+      "description": "Tracks what the user last read/did",
+      "type": "object",
+      "properties": {
+        "lastQuranSurah": { "type": "number" },
+        "lastQuranAyah": { "type": "number" },
+        "lastQuranTimestamp": { "type": "timestamp" },
+        "lastHadithCollection": { "type": "string" },
+        "lastHadithNumber": { "type": "number" },
+        "lastHadithTimestamp": { "type": "timestamp" },
+        "lastTasbihTarget": { "type": "number" },
+        "updatedAt": { "type": "timestamp" }
+      },
+      "required": ["updatedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Registered users"
+    },
+    "users/{userId}/progress/{dateId}": {
+      "schema": "DailyProgress",
+      "description": "Daily progress tracking per user"
+    },
+    "users/{userId}/history/main": {
+      "schema": "History",
+      "description": "Single document per user holding the latest history states"
+    }
+  }
+}
