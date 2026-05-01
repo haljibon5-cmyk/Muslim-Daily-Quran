@@ -120,10 +120,26 @@ export function usePrayerNotifications(location: { lat: number, lng: number } | 
     const playAzanAndNotify = (prayerName: string) => {
         // Show Browser Notification
         if ("Notification" in window && Notification.permission === "granted") {
-            new Notification(`Time for ${prayerName}`, {
-                body: `It's time to pray ${prayerName}. May Allah accept your prayers.`,
-                icon: '/vite.svg' 
-            });
+            if (navigator.serviceWorker) {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(`Time for ${prayerName}`, {
+                        body: `It's time to pray ${prayerName}. May Allah accept your prayers.`,
+                        icon: '/vite.svg',
+                        badge: '/vite.svg',
+                        vibrate: [200, 100, 200, 100, 200, 100, 200]
+                    });
+                }).catch(() => {
+                    new Notification(`Time for ${prayerName}`, {
+                        body: `It's time to pray ${prayerName}. May Allah accept your prayers.`,
+                        icon: '/vite.svg' 
+                    });
+                });
+            } else {
+                new Notification(`Time for ${prayerName}`, {
+                    body: `It's time to pray ${prayerName}. May Allah accept your prayers.`,
+                    icon: '/vite.svg' 
+                });
+            }
         }
 
         // Play Azan Audio

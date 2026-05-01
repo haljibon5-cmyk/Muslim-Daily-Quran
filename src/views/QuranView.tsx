@@ -126,6 +126,7 @@ function SurahReader({ surahId, surahTitle, translation, resumedAyah, onBack }: 
     const [loading, setLoading] = useState(true);
     const [playingIndex, setPlayingIndex] = useState<number | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const isMounted = useRef(true);
     const [bookmarksState, setBookmarksState] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
@@ -169,19 +170,8 @@ function SurahReader({ surahId, surahTitle, translation, resumedAyah, onBack }: 
                    saveLastQuranRead(surahId, resumedAyah || 1, surahTitle);
                    localStorage.setItem('guest_quran_history', JSON.stringify({ surah: surahId, ayah: resumedAyah || 1, name: surahTitle }));
                    
-                   // Update daily progress for reading Quran
-                   if (auth.currentUser) {
-                       updateDailyProgress('quran', 100).catch(console.error);
-                   } else {
-                       let lp = {"salat": 0, "quran": 0, "tasbih": 0, "total": 0};
-                       try {
-                           const savedLp = localStorage.getItem('guest_progress');
-                           if (savedLp) lp = JSON.parse(savedLp);
-                       } catch(e) {}
-                       lp.quran = 100;
-                       lp.total = Math.floor((lp.salat + lp.quran + lp.tasbih)/3);
-                       localStorage.setItem('guest_progress', JSON.stringify(lp));
-                   }
+                   // Increase a small amount on open (e.g., 5%)
+                   updateDailyProgress('quran', 5, true).catch(console.error);
                 }
             })
             .catch(console.error)
@@ -204,9 +194,15 @@ function SurahReader({ surahId, surahTitle, translation, resumedAyah, onBack }: 
     }, [loading, verses, resumedAyah]);
 
     useEffect(() => {
+        isMounted.current = true;
         return () => {
+            isMounted.current = false;
             if (audioRef.current) {
                 audioRef.current.pause();
+                audioRef.current.src = '';
+            }
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
             }
         }
     }, [])
@@ -230,6 +226,7 @@ function SurahReader({ surahId, surahTitle, translation, resumedAyah, onBack }: 
         const handleEnd = () => {
             if (!ended) {
                 ended = true;
+                if (!isMounted.current) return;
                 onEnd();
             }
         };
@@ -284,6 +281,7 @@ function SurahReader({ surahId, surahTitle, translation, resumedAyah, onBack }: 
         utterance.rate = 0.85;
         utterance.onend = onEnd;
         utterance.onerror = (e) => {
+            if (!isMounted.current) return;
             console.error("Native TTS error, attempting fallback URL audio...", e);
             speakTranslationFallback(text, langCodeMatch, onEnd);
         };
@@ -299,17 +297,25 @@ function SurahReader({ surahId, surahTitle, translation, resumedAyah, onBack }: 
         window.speechSynthesis.speak(utterance);
     };
 
-    const togglePlay = (index: number) => {
+    const togglePlay = (index: number, isAutoPlay: boolean = false) => {
         // Log history point
         const currentAyah = verses[index]?.ar?.numberInSurah || 1;
         saveLastQuranRead(surahId, currentAyah, surahTitle);
         localStorage.setItem('guest_quran_history', JSON.stringify({ surah: surahId, ayah: currentAyah, name: surahTitle }));
+        
+        // Give 2% progress each time user plays an ayah
+        updateDailyProgress('quran', 2, true).catch(console.error);
+
+        if (!isAutoPlay && playingIndex !== null && playingIndex !== index) {
+            // Already playing another ayah, prevent starting a new one until stopped
+            return;
+        }
 
         const warmup = new SpeechSynthesisUtterance('');
         warmup.volume = 0;
         window.speechSynthesis.speak(warmup);
 
-        if (playingIndex === index) {
+        if (!isAutoPlay && playingIndex === index) {
             if (audioRef.current && !audioRef.current.paused) {
                 audioRef.current.pause();
                 setPlayingIndex(null);
@@ -336,12 +342,14 @@ function SurahReader({ surahId, surahTitle, translation, resumedAyah, onBack }: 
         if (url) {
             const newAudio = new Audio(url);
             newAudio.onended = () => {
+                if (!isMounted.current) return;
                 const translatedText = verses[index].en.text;
                 const cleanText = translatedText.replace(/<[^>]*>?/gm, '');
                 
                 speakTranslation(cleanText, translation, () => {
+                     if (!isMounted.current) return;
                      if (index + 1 < verses.length) {
-                         togglePlay(index + 1);
+                         togglePlay(index + 1, true);
                      } else {
                          setPlayingIndex(null);
                      }
@@ -356,7 +364,7 @@ function SurahReader({ surahId, surahTitle, translation, resumedAyah, onBack }: 
             }
             setPlayingIndex(index);
         }
-    }
+    };
 
     return (
         <div className="flex flex-col h-full bg-bg-base absolute inset-0 z-20">

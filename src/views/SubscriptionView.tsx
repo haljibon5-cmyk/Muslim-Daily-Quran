@@ -43,7 +43,7 @@ export default function SubscriptionView({ isPremium, onSubscribe, onBack }: Sub
                     setSubscribing(false);
                 }
             } catch (jsonError) {
-                 setErrorMsg('Failed to parse backend response. Payment service may be unavailable.');
+                 setErrorMsg('Failed to connect to backend. Please Make sure you deployed your app on Render as a "Web Service" (not a Static Site) so the Server can run.');
                  setSubscribing(false);
             }
         } catch (error) {

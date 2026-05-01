@@ -54,34 +54,58 @@ export const getHistory = async () => {
 // -- Progress Save Functions --
 
 export const getDailyProgress = async () => {
-    if (!auth.currentUser) return null;
     const today = getTodayId();
-    const ref = doc(db, 'users', auth.currentUser.uid, 'progress', today);
-    const snap = await getDoc(ref);
-    return snap.exists() ? snap.data() : { salatCompletion: 0, quranCompletion: 0, tasbihCompletion: 0, totalCompletion: 0 };
+    let localData = { salatCompletion: 0, quranCompletion: 0, tasbihCompletion: 0, totalCompletion: 0 };
+    
+    try {
+        // Clean up old daily progress keys
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('daily_progress_') && key !== `daily_progress_${today}`) {
+                localStorage.removeItem(key);
+            }
+        }
+
+        const stored = localStorage.getItem(`daily_progress_${today}`);
+        if (stored) localData = JSON.parse(stored);
+    } catch(e) {}
+
+    return localData;
 };
 
-export const updateDailyProgress = async (type: 'salat' | 'quran' | 'tasbih', percentage: number) => {
-    if (!auth.currentUser) return;
+export const updateDailyProgress = async (type: 'salat' | 'quran' | 'tasbih', percentage: number, incremental: boolean = false) => {
     const today = getTodayId();
-    const ref = doc(db, 'users', auth.currentUser.uid, 'progress', today);
+    let currentData: any = { salatCompletion: 0, quranCompletion: 0, tasbihCompletion: 0 };
     
-    // First get existing to calculate total
-    const snap = await getDoc(ref);
-    let pd = snap.exists() ? snap.data() : { salatCompletion: 0, quranCompletion: 0, tasbihCompletion: 0 };
-    
+    // Get existing from local
+    try {
+        const stored = localStorage.getItem(`daily_progress_${today}`);
+        if (stored) currentData = JSON.parse(stored);
+    } catch(e) {}
+
     // update specific metric
-    if (type === 'salat') pd.salatCompletion = percentage;
-    if (type === 'quran') pd.quranCompletion = percentage;
-    if (type === 'tasbih') pd.tasbihCompletion = percentage;
+    const fieldMap: Record<string, string> = {
+        'salat': 'salatCompletion',
+        'quran': 'quranCompletion',
+        'tasbih': 'tasbihCompletion'
+    };
+    const field = fieldMap[type];
+    
+    if (incremental) {
+        currentData[field] = Math.min(100, (currentData[field] || 0) + percentage);
+    } else {
+        currentData[field] = Math.min(100, percentage);
+    }
     
     // calculate average/total
-    const total = Math.floor((pd.salatCompletion + pd.quranCompletion + pd.tasbihCompletion) / 3);
+    const total = Math.floor(((currentData.salatCompletion || 0) + (currentData.quranCompletion || 0) + (currentData.tasbihCompletion || 0)) / 3);
     
-    await setDoc(ref, {
+    const finalData = {
+        ...currentData,
         date: today,
-        ...pd,
         totalCompletion: total,
-        updatedAt: new Date()
-    }, { merge: true });
+    };
+    
+    // Save to local
+    localStorage.setItem(`daily_progress_${today}`, JSON.stringify(finalData));
 };

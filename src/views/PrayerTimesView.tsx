@@ -4,6 +4,7 @@ import { Compass, Sunrise, Sunset, Moon, Cloud, Sun, CloudRain, ArrowLeft, Setti
 import { fetchPrayerTimes } from '../services/api';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { updateDailyProgress } from '../lib/db';
 
 const getMoonPhase = (date: Date) => {
   let year = date.getFullYear();
@@ -53,6 +54,10 @@ export default function PrayerTimesView({ location, locationName, locError, onNa
     } catch(e) {}
     return { Fajr: true, Sunrise: false, Dhuhr: true, Asr: true, Maghrib: true, Isha: true };
   });
+
+  useEffect(() => {
+     updateDailyProgress('salat', 20, true).catch(console.error);
+  }, []);
 
   const toggleAlarm = (prayerName: string) => {
     setAlarms(prev => {

@@ -484,6 +484,35 @@ export default function App() {
   const isAdmin = user?.email === 'rahelk3625@gmail.com';
   const effectiveIsPremium = isPremium || isAdmin;
 
+  useEffect(() => {
+    if (!effectiveIsPremium) {
+      // Vignette
+      const scriptVignette = document.createElement('script');
+      scriptVignette.dataset.zone = '10949803';
+      scriptVignette.src = 'https://n6wxm.com/vignette.min.js';
+      scriptVignette.id = 'monetag-vignette';
+      document.body.appendChild(scriptVignette);
+
+      // In-Page Push
+      const scriptPush = document.createElement('script');
+      scriptPush.dataset.zone = '10949811';
+      scriptPush.src = 'https://nap5k.com/tag.min.js';
+      scriptPush.id = 'monetag-push';
+      document.body.appendChild(scriptPush);
+
+      return () => {
+        const existingVignette = document.getElementById('monetag-vignette');
+        if (existingVignette) {
+          existingVignette.remove();
+        }
+        const existingPush = document.getElementById('monetag-push');
+        if (existingPush) {
+          existingPush.remove();
+        }
+      };
+    }
+  }, [effectiveIsPremium]);
+
   const handleNavigate = (tab: Tab) => {
     if (tab !== activeTab) {
       if (!effectiveIsPremium && tab !== 'subscription') {

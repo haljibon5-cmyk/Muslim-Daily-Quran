@@ -46,19 +46,8 @@ export default function TasbihView({ onBack }: { onBack?: () => void }) {
         const newCount = count + 1;
         setCount(newCount);
         
-        if (newCount % target === 0) {
-            if (auth.currentUser) {
-                updateDailyProgress('tasbih', 100).catch(console.error);
-            } else {
-                let lp = {"salat": 0, "quran": 0, "tasbih": 0, "total": 0};
-                try {
-                    const savedLp = localStorage.getItem('guest_progress');
-                    if (savedLp) lp = JSON.parse(savedLp);
-                } catch(e) {}
-                lp.tasbih = 100;
-                lp.total = Math.floor((lp.salat + lp.quran + lp.tasbih)/3);
-                localStorage.setItem('guest_progress', JSON.stringify(lp));
-            }
+        if (newCount > 0 && newCount % target === 0) {
+            updateDailyProgress('tasbih', 34, true).catch(console.error); 
         }
 
         // Haptic feedback if supported

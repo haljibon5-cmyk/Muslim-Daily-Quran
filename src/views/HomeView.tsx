@@ -383,25 +383,19 @@ export default function HomeView({ location, locationName, onNavigate, isDarkMod
     isGuest: boolean,
     isPremium: boolean
 }) {
-  const [progress, setProgress] = useState({ salat: 30, quran: 30, tasbih: 40, total: 60 });
+  const [progress, setProgress] = useState({ salat: 0, quran: 0, tasbih: 0, total: 0 });
 
   useEffect(() => {
-    if (user) {
-        getDailyProgress().then(data => {
-            if (data) {
-                // If real data exists, we could use it. But let's mock it somewhat close to design for display.
-                // Wait, if it's 0, let's keep mock design numbers.
-                if (data.totalCompletion) {
-                    setProgress({
-                        salat: data.salatCompletion || 0,
-                        quran: data.quranCompletion || 0,
-                        tasbih: data.tasbihCompletion || 0,
-                        total: data.totalCompletion || 0
-                    });
-                }
-            }
-        });
-    }
+    getDailyProgress().then(data => {
+        if (data) {
+            setProgress({
+                salat: data.salatCompletion || 0,
+                quran: data.quranCompletion || 0,
+                tasbih: data.tasbihCompletion || 0,
+                total: data.totalCompletion || 0
+            });
+        }
+    });
   }, [user]);
 
   const dashOffset = 251 - (251 * progress.total / 100);
