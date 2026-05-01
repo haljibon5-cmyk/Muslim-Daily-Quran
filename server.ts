@@ -2,17 +2,51 @@ import 'dotenv/config';
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
+import fs from 'fs';
 import { initializeApp as adminInitializeApp, cert as adminCert } from 'firebase-admin/app';
 import { getAuth as adminGetAuth } from 'firebase-admin/auth';
 import { getFirestore as adminGetFirestore } from 'firebase-admin/firestore';
 
 try {
-    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+    let serviceAccount = null;
+
+    // Handle Render's /etc/secrets/ directory for Firebase JSON files
+    if (fs.existsSync('/etc/secrets')) {
+        const files = fs.readdirSync('/etc/secrets');
+        for (const file of files) {
+            try {
+                const rawData = fs.readFileSync(`/etc/secrets/${file}`, 'utf8');
+                const parsed = JSON.parse(rawData);
+                // Basic check to see if it's a firebase service account
+                if (parsed.project_id && parsed.private_key) {
+                    serviceAccount = parsed;
+                    console.log(`Firebase Admin initialized via Secret File: /etc/secrets/${file}`);
+                    break;
+                }
+            } catch(e) {
+                // Not a json file, skip
+            }
+        }
+    }
+
+    if (!serviceAccount && process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+        try {
+            serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+            console.log("Firebase Admin initialized via FIREBASE_SERVICE_ACCOUNT_KEY");
+        } catch (e) {
+            // Also check if FIREBASE_SERVICE_ACCOUNT_KEY is a path (e.g., Render secret file path manually set)
+            if (fs.existsSync(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)) {
+                const rawData = fs.readFileSync(process.env.FIREBASE_SERVICE_ACCOUNT_KEY, 'utf8');
+                serviceAccount = JSON.parse(rawData);
+                console.log(`Firebase Admin initialized via Key Path: ${process.env.FIREBASE_SERVICE_ACCOUNT_KEY}`);
+            }
+        }
+    }
+
+    if (serviceAccount) {
         adminInitializeApp({
             credential: adminCert(serviceAccount)
         });
-        console.log("Firebase Admin initialized via FIREBASE_SERVICE_ACCOUNT_KEY");
     } else {
         console.warn("FIREBASE_SERVICE_ACCOUNT_KEY is missing. Falling back to default application credentials.");
         adminInitializeApp();

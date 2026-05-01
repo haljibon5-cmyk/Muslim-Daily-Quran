@@ -280,6 +280,20 @@ export default function App() {
   const [showAd, setShowAd] = useState(false);
   const [showAppOpenAd, setShowAppOpenAd] = useState(false);
   const [azanEnabled, setAzanEnabled] = useState(() => localStorage.getItem('azanEnabled') === 'true');
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      if (!sessionStorage.getItem('installPromptDismissed')) {
+          setShowInstallPrompt(true);
+      }
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
   
   // Auth state
   const [user, setUser] = useState<User | null>(null);
@@ -846,46 +860,100 @@ export default function App() {
         )}
       </main>
 
+      {/* PWA Install Prompt */}
+      {showInstallPrompt && deferredPrompt && (
+        <div className="absolute top-4 left-4 right-4 z-[90] bg-accent text-white p-4 rounded-2xl shadow-2xl flex items-center justify-between animate-in slide-in-from-top-4">
+          <div className="flex flex-col">
+            <span className="font-bold text-lg">Install Muslim Daily</span>
+            <span className="text-xs opacity-90">Add to home screen for quick access</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => {
+                setShowInstallPrompt(false);
+                sessionStorage.setItem('installPromptDismissed', 'true');
+              }}
+              className="px-3 py-1.5 text-xs font-bold bg-black/20 hover:bg-black/30 rounded-lg transition"
+            >
+              Later
+            </button>
+            <button 
+              onClick={async () => {
+                if (deferredPrompt) {
+                  deferredPrompt.prompt();
+                  const { outcome } = await deferredPrompt.userChoice;
+                  if (outcome === 'accepted') {
+                    setDeferredPrompt(null);
+                    setShowInstallPrompt(false);
+                  }
+                }
+              }}
+              className="px-4 py-1.5 text-xs font-bold bg-white text-accent hover:bg-white/90 rounded-lg transition"
+            >
+              Install
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* App Open Ad Overlay */}
       {showAppOpenAd && !effectiveIsPremium && (
         <div className="absolute inset-0 z-[100] bg-white flex flex-col items-center justify-center p-6 animate-in fade-in duration-200">
-           <div className="w-full max-w-sm flex-1 flex items-center justify-center border-4 border-dashed border-gray-300 relative">
+           <a 
+              href="https://omg10.com/4/10950604" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              onClick={(e) => {
+                  setTimeout(() => setShowAppOpenAd(false), 500); // Close ad overlay after clicking
+              }}
+              className="w-full max-w-sm flex-1 flex flex-col items-center justify-center border-4 border-dashed border-accent hover:bg-accent/5 transition-colors relative cursor-pointer"
+           >
                <button 
-                  onClick={() => setShowAppOpenAd(false)}
-                  className="absolute top-4 right-4 bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-xs font-bold border border-gray-300 z-10"
+                  onClick={(e) => {
+                      e.preventDefault();
+                      setShowAppOpenAd(false);
+                  }}
+                  className="absolute top-4 right-4 bg-gray-100 text-gray-500 hover:text-gray-800 px-3 py-1 rounded-full text-xs font-bold border border-gray-300 z-10"
                >
-                   Continue to App
+                   Skip & Continue to App
                </button>
-               <div className="text-center text-gray-500">
-                   <p className="font-bold text-lg mb-1">Monetag App Open</p>
-                   <p className="text-xs uppercase tracking-widest mb-4">Initial Load Ad</p>
-                   <div className="text-[10px] space-y-1">
-                       <p>Simulating Monetag Direct Link</p>
-                   </div>
+               <div className="text-center text-gray-700">
+                   <p className="font-bold text-2xl mb-2 text-accent">Tap Here for Special Offer</p>
+                   <p className="text-xs uppercase tracking-widest mb-4">Advertisement</p>
                </div>
-           </div>
+           </a>
         </div>
       )}
 
       {/* Interstitial Ad Overlay */}
       {showAd && (
         <div className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 animate-in fade-in duration-200">
-           <div className="bg-white rounded-xl w-full max-w-sm h-[400px] flex items-center justify-center border-4 border-dashed border-gray-300 relative shadow-2xl">
+           <a 
+              href="https://omg10.com/4/10950604" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                  setTimeout(() => setShowAd(false), 500); 
+              }}
+              className="bg-white rounded-xl w-full max-w-sm h-[400px] flex flex-col items-center justify-center border-4 border-dashed border-accent hover:bg-accent/5 relative shadow-2xl cursor-pointer"
+           >
                <button 
-                  onClick={() => setShowAd(false)}
-                  className="absolute -top-4 -right-4 bg-gray-800 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg border-2 border-white"
+                  onClick={(e) => {
+                      e.preventDefault();
+                      setShowAd(false);
+                  }}
+                  className="absolute -top-4 -right-4 bg-gray-800 hover:bg-gray-700 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg border-2 border-white z-10"
                >
                    &times;
                </button>
-               <div className="text-center text-gray-500">
-                   <p className="font-bold text-lg mb-1">Monetag Interstitial</p>
-                   <p className="text-xs uppercase tracking-widest mb-4">Ad Space</p>
-                   <div className="text-[10px] space-y-1">
-                       <p>Simulating monetag vignette/interstitial</p>
+               <div className="text-center text-gray-700">
+                   <p className="font-bold text-2xl mb-2 text-accent">Special Offer</p>
+                   <p className="text-xs uppercase tracking-widest mb-4">Advertisement</p>
+                   <div className="text-sm font-medium opacity-80 px-4">
+                       Tap to find out more.
                    </div>
                </div>
-           </div>
-           <p className="text-white mt-4 text-sm bg-black/50 px-4 py-1 rounded-full">Simulated Ad (Auto-closing)</p>
+           </a>
         </div>
       )}
 
