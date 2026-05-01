@@ -828,11 +828,10 @@ export default function App() {
                    Continue to App
                </button>
                <div className="text-center text-gray-500">
-                   <p className="font-bold text-lg mb-1">AdMob App Open</p>
+                   <p className="font-bold text-lg mb-1">Monetag App Open</p>
                    <p className="text-xs uppercase tracking-widest mb-4">Initial Load Ad</p>
                    <div className="text-[10px] space-y-1">
-                       <p>App ID: ca-app-pub-2792862085084694~6668747093</p>
-                       <p>App Open ID: ca-app-pub-2792862085084694/5471824305</p>
+                       <p>Simulating Monetag Direct Link</p>
                    </div>
                </div>
            </div>
@@ -850,11 +849,10 @@ export default function App() {
                    &times;
                </button>
                <div className="text-center text-gray-500">
-                   <p className="font-bold text-lg mb-1">AdMob Interstitial</p>
+                   <p className="font-bold text-lg mb-1">Monetag Interstitial</p>
                    <p className="text-xs uppercase tracking-widest mb-4">Ad Space</p>
                    <div className="text-[10px] space-y-1">
-                       <p>App ID: ca-app-pub-2792862085084694~6668747093</p>
-                       <p>Interstitial ID: ca-app-pub-2792862085084694/4505707471</p>
+                       <p>Simulating monetag vignette/interstitial</p>
                    </div>
                </div>
            </div>

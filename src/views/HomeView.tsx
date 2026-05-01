@@ -407,7 +407,7 @@ export default function HomeView({ location, locationName, onNavigate, isDarkMod
   const dashOffset = 251 - (251 * progress.total / 100);
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto w-full relative bg-[#4D8F76]">
+    <div className={`flex flex-col h-full overflow-y-auto w-full relative transition-colors duration-300 ${isDarkMode ? 'bg-header-bg' : 'bg-[#4D8F76]'}`}>
       <div className="relative z-10 flex-col pt-12 pb-4 px-5 text-white w-full">
          
          <div className="flex justify-between items-start">
@@ -444,7 +444,7 @@ export default function HomeView({ location, locationName, onNavigate, isDarkMod
           
           {/* Location Banner */}
           {!location ? (
-               <div className="bg-[#2D6A52] rounded-[24px] p-5 flex items-center justify-between shadow-lg text-white mt-10">
+               <div className={`rounded-[24px] p-5 flex items-center justify-between shadow-lg text-white mt-10 transition-colors ${isDarkMode ? 'bg-bg-panel border border-border-main' : 'bg-[#2D6A52]'}`}>
                    <div className="flex items-center gap-2">
                        <div className="w-6 h-6 border border-white/50 rounded-full flex items-center justify-center">
                            <span className="text-[10px]">✕</span>
@@ -454,13 +454,13 @@ export default function HomeView({ location, locationName, onNavigate, isDarkMod
                            <p className="font-bold text-lg leading-tight">Location</p>
                        </div>
                    </div>
-                   <button className="bg-white text-black px-4 py-2 rounded-full text-xs font-bold flex items-center gap-1 shadow-md">
+                   <button className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-1 shadow-md transition-colors ${isDarkMode ? 'bg-accent text-black' : 'bg-white text-black'}`}>
                        <span className="w-3 h-3 flex items-center justify-center border border-black rounded-full shrink-0 text-[8px]">◎</span>
                        Enable
                    </button>
                </div>
           ) : (
-               <div className="bg-[#2D6A52] rounded-[24px] p-5 flex items-center justify-between shadow-lg text-white mt-4">
+               <div className={`rounded-[24px] p-5 flex items-center justify-between shadow-lg text-white mt-4 transition-colors ${isDarkMode ? 'bg-bg-panel border border-border-main' : 'bg-[#2D6A52]'}`}>
                    <div className="flex flex-col">
                        <p className="text-xs opacity-90 mb-1">Your Location</p>
                        <p className="font-bold flex items-center gap-1 text-lg">
@@ -468,21 +468,21 @@ export default function HomeView({ location, locationName, onNavigate, isDarkMod
                            <span className="truncate max-w-[180px]">{locationName}</span>
                        </p>
                    </div>
-                   <button className="bg-white text-[#2D6A52] px-4 py-2 rounded-full text-xs font-bold shadow-md">
+                   <button className={`px-4 py-2 rounded-full text-xs font-bold shadow-md transition-colors ${isDarkMode ? 'bg-accent text-white' : 'bg-white text-[#2D6A52]'}`}>
                        Update
                    </button>
                </div>
           )}
 
           {/* Daily Progress Card */}
-          <div className="bg-[#122421] text-white rounded-[24px] p-6 shadow-xl border border-white/5">
+          <div className={`text-white rounded-[24px] p-6 shadow-xl transition-colors ${isDarkMode ? 'bg-progress-bg border border-border-main' : 'bg-[#122421] border border-white/5'}`}>
               <div className="flex justify-between items-center mb-4">
                  
                  {/* Circle progress */}
                  <div className="relative w-[100px] h-[100px] flex-shrink-0 flex items-center justify-center">
                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                          <circle cx="50" cy="50" r="40" className="stroke-white/10" strokeWidth="6" fill="none" />
-                         <circle cx="50" cy="50" r="40" className="stroke-[#4D8F76] transition-all duration-1000 ease-out" strokeWidth="6" fill="none" strokeDasharray="251" strokeDashoffset={dashOffset} strokeLinecap="round" />
+                         <circle cx="50" cy="50" r="40" className={`transition-all duration-1000 ease-out ${isDarkMode ? 'stroke-accent' : 'stroke-[#4D8F76]'}`} strokeWidth="6" fill="none" strokeDasharray="251" strokeDashoffset={dashOffset} strokeLinecap="round" />
                      </svg>
                      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                          <span className="text-[10px] font-medium opacity-70 leading-tight">Total<br/>Completion</span>
@@ -522,7 +522,7 @@ export default function HomeView({ location, locationName, onNavigate, isDarkMod
           </div>
       </div>
 
-      <div className="relative z-10 w-full bg-white rounded-t-[40px] pt-8 pb-32 px-5 mt-8 flex-1 shadow-[0_-10px_40px_-5px_rgba(0,0,0,0.1)]">
+      <div className={`relative z-10 w-full rounded-t-[40px] pt-8 pb-32 px-5 mt-8 flex-1 shadow-[0_-10px_40px_-5px_rgba(0,0,0,0.1)] transition-colors duration-300 ${isDarkMode ? 'bg-bg-base' : 'bg-white'}`}>
         
         {/* Grid Navigation */}
         <div className="grid grid-cols-4 gap-y-6 gap-x-2">
@@ -557,10 +557,10 @@ function MenuButton({ icon, label, onClick, disabled, delay }: { icon: React.Rea
             disabled={disabled}
             className={`flex flex-col items-center justify-start space-y-2 ${disabled ? 'opacity-50 grayscale cursor-not-allowed' : 'active:scale-95'} transition-transform mx-auto w-[70px]`}
         >
-            <div className="w-14 h-14 bg-white border border-gray-100 rounded-full flex items-center justify-center shadow-lg shadow-[#4D8F76]/10 text-[#4D8F76]">
+            <div className="w-14 h-14 bg-bg-panel border border-border-main rounded-full flex items-center justify-center shadow-lg shadow-accent/10 text-accent transition-colors">
                 {React.cloneElement(icon as React.ReactElement, { className: "w-[26px] h-[26px] z-10 stroke-[1.5]" })}
             </div>
-            <span className="text-[11px] font-medium text-gray-800 text-center leading-tight">{label}</span>
+            <span className="text-[11px] font-medium text-text-main text-center leading-tight transition-colors">{label}</span>
         </motion.button>
     );
 }

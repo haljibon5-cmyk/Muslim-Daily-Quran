@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, Shield, ShieldCheck, Crown } from 'lucide-react';
+import { CheckCircle, Shield, ShieldCheck, Crown, ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Tab } from '../App';
 
@@ -17,7 +17,6 @@ export default function SubscriptionView({ isPremium, onSubscribe, onBack }: Sub
     ];
 
     const [selectedId, setSelectedId] = useState('monthly');
-    const [paymentMethod, setPaymentMethod] = useState<'paypal' | 'card'>('paypal');
     const [subscribing, setSubscribing] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -30,7 +29,7 @@ export default function SubscriptionView({ isPremium, onSubscribe, onBack }: Sub
             const response = await fetch('/api/create-paypal-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ planId: selectedId, days: plan?.days, paymentMethod })
+                body: JSON.stringify({ planId: selectedId, days: plan?.days, paymentMethod: 'paypal' })
             });
 
             try {
@@ -80,6 +79,14 @@ export default function SubscriptionView({ isPremium, onSubscribe, onBack }: Sub
         <div className="flex flex-col h-full bg-header-bg relative text-white pb-24 overflow-y-auto no-scrollbar">
              <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] pointer-events-none"></div>
              
+             <button 
+                 onClick={() => onBack('home')} 
+                 className="absolute top-4 left-4 z-20 p-2 bg-black/20 hover:bg-black/40 rounded-full transition-colors flex items-center justify-center backdrop-blur-sm"
+                 aria-label="Go back"
+             >
+                 <ArrowLeft className="w-5 h-5 text-white" />
+             </button>
+
              <div className="pt-12 pb-6 px-6 relative z-10 flex flex-col items-center">
                  <div className="w-20 h-20 bg-accent/20 border border-accent/40 rounded-3xl flex items-center justify-center shadow-lg mb-4 backdrop-blur-sm">
                       <Shield className="w-10 h-10 text-accent" />
@@ -127,26 +134,10 @@ export default function SubscriptionView({ isPremium, onSubscribe, onBack }: Sub
                  )}
 
                  <div className="mt-8 flex flex-col gap-3">
-                     <p className="text-sm font-medium text-white/50 text-left px-2 uppercase tracking-wider">Select Payment Method</p>
-                     <div className="grid grid-cols-2 gap-4">
+                     <p className="text-sm font-medium text-white/50 text-left px-2 uppercase tracking-wider">Payment Method</p>
+                     <div className="grid grid-cols-1 gap-4">
                          <div
-                             onClick={() => setPaymentMethod('card')}
-                             className={`relative rounded-xl p-4 border-2 cursor-pointer transition-all flex flex-col items-center gap-2 justify-center
-                                 ${paymentMethod === 'card' 
-                                     ? 'bg-accent/10 border-accent shadow-[0_0_15px_rgba(212,175,55,0.15)] text-accent' 
-                                     : 'bg-white/5 border-transparent text-white/50 hover:bg-white/10'}`}
-                         >
-                             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                             </svg>
-                             <span className="font-semibold text-sm">Card</span>
-                         </div>
-                         <div
-                             onClick={() => setPaymentMethod('paypal')}
-                             className={`relative rounded-xl p-4 border-2 cursor-pointer transition-all flex flex-col items-center gap-2 justify-center
-                                 ${paymentMethod === 'paypal' 
-                                     ? 'bg-accent/10 border-accent shadow-[0_0_15px_rgba(212,175,55,0.15)] text-accent' 
-                                     : 'bg-white/5 border-transparent text-white/50 hover:bg-white/10'}`}
+                             className={`relative rounded-xl p-4 border-2 transition-all flex flex-col items-center gap-2 justify-center bg-accent/10 border-accent shadow-[0_0_15px_rgba(212,175,55,0.15)] text-accent`}
                          >
                              <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
                                  <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zM11.5 8.928h1.96c1.15 0 2.1-.2 2.74-.75.64-.54.91-1.39.77-2.31-.19-.94-.78-1.55-1.57-1.78-.71-.21-1.73-.25-2.91-.25H8.761l-1.045 6.643h1.834l.21-1.332c.08-.52.524-.9.105-.9H11.5z" />
